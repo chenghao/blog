@@ -26,5 +26,4 @@ def get_md5_s(s):
 	return code
 
 if __name__ == "__main__":
-	print(get_md5_s("chenghao"))
-	print(get_md5_s("hao"))
+	print(get_md5_s("13158460430"))

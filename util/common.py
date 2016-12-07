@@ -3,7 +3,7 @@ __author__ = "chenghao"
 
 from datetime import datetime, date
 import re, uuid, json
-import conf
+import util
 
 
 def get_current_date(pattern="%Y-%m-%d %H:%M:%S", datetime_s=None):
@@ -50,7 +50,7 @@ def random_num():
 	获取随机数
 	:return:
 	"""
-	return uuid.uuid4().hex
+	return uuid.uuid4().hex.lower()
 
 
 class ComplexEncoder(json.JSONEncoder):
@@ -67,7 +67,7 @@ class ComplexEncoder(json.JSONEncoder):
 			return json.JSONEncoder.default(self, obj)
 
 
-def total_page(total_rows, rows=conf.rows):
+def total_page(total_rows, rows=util.get_rows()):
 	"""
 	将总行数计算出多少页
 	"""
