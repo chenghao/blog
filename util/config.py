@@ -14,7 +14,7 @@ class Singleton(type):
 	def __call__(cls, *args, **kwargs):
 		if cls._instances is None:
 			super(Singleton, cls).__call__(*args, **kwargs)
-			cls._instances = ConfigParser.SafeConfigParser()
+			cls._instances = ConfigParser.ConfigParser()
 			cls._instances.read(path)
 		return cls._instances
 
@@ -25,4 +25,8 @@ class Config(object):
 
 if __name__ == "__main__":
 	conf = Config()
-	print(conf.get("orientdb", "user"))
+
+	user = conf.get("orientdb", "user")
+	pwd = conf.get("orientdb", "pwd")
+	print type(user.encode("utf-8")), user.encode("utf-8")
+	print type(pwd), pwd

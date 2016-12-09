@@ -5,9 +5,11 @@ from gevent.monkey import patch_all
 from bottle import Bottle, static_file
 from routes import Routes
 
+
 bottle = Bottle()
 # Bottle Routes
 bottle.merge(Routes)
+
 
 @bottle.get('/static/<filename:path>')
 def static(filename):

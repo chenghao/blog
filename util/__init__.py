@@ -6,17 +6,11 @@ import os, logging, re, uuid, json
 from logging import handlers
 from datetime import datetime, date
 
-ADMIN_PREFIX = "/admin"
-UEDITOR_PREFIX = "/ueditor"
-
-
-def get_rows():
-	"""
-	获取每页显示行数
-	:return:
-	"""
-	conf = config.Config()
-	return conf.getint("basic", "rows")
+# 基本配置
+ADMIN_PREFIX = "/admin"  # 管理平台访问前缀
+UEDITOR_PREFIX = "/ueditor"  # 富文本编辑访问前缀
+ROW = 10    # 每页显示多少行
+DB_NAME = "blog"  # 数据库名称
 
 
 def get_current_date(pattern="%Y-%m-%d %H:%M:%S", datetime_s=None):
@@ -69,7 +63,6 @@ class ComplexEncoder(json.JSONEncoder):
 	"""
 	json日期格式化
 	"""
-
 	def default(self, obj):
 		if isinstance(obj, datetime):
 			return obj.strftime('%Y-%m-%d %H:%M:%S')
@@ -79,12 +72,10 @@ class ComplexEncoder(json.JSONEncoder):
 			return json.JSONEncoder.default(self, obj)
 
 
-def total_page(total_rows, rows=None):
+def total_page(total_rows, rows=ROW):
 	"""
 	将总行数计算出多少页
 	"""
-	if rows is None:
-		rows = get_rows()
 	return int((total_rows - 1) / rows + 1)
 
 
@@ -92,7 +83,6 @@ class SingletonLog(type):
 	"""
 	日志单例
 	"""
-
 	def __init__(cls, name, bases, dict):
 		super(SingletonLog, cls).__init__(name, bases, dict)
 		cls._instances = None
@@ -128,5 +118,4 @@ class GetLogging(object):
 
 
 if __name__ == "__main__":
-	print get_rows()
 	print total_page(24)

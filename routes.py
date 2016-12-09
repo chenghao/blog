@@ -9,8 +9,8 @@ from ueditor.ueditor import ueditor_bottle
 
 Routes = Bottle()
 
-# App to render / (home)
+# 主路径（默认）
 Routes.merge(blog_app)
-# Mount other applications
+# 挂载其它模块路径
 Routes.mount(util.ADMIN_PREFIX, admin_app)
 Routes.mount(util.UEDITOR_PREFIX, ueditor_bottle)
