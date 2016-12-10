@@ -3,7 +3,7 @@ __author__ = "chenghao"
 
 import ConfigParser
 
-path = "../blog.ini"
+path = "./blog.ini"
 
 
 class Singleton(type):
@@ -14,7 +14,7 @@ class Singleton(type):
 	def __call__(cls, *args, **kwargs):
 		if cls._instances is None:
 			super(Singleton, cls).__call__(*args, **kwargs)
-			cls._instances = ConfigParser.ConfigParser()
+			cls._instances = ConfigParser.SafeConfigParser()
 			cls._instances.read(path)
 		return cls._instances
 

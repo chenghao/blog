@@ -12,11 +12,13 @@ def login(login_name, login_pwd):
 		""" % (login_name, encrypt.get_md5_s(login_pwd))
 	results = conn.query(sql)
 	if len(results) > 0:
-		return results[0].oRecordData
+		res = results[0].oRecordData
+		res["rid"] = str(res["rid"])
+		return res
 	else:
-		return False
+		return None
 
 
 if __name__ == "__main__":
 	result = login("chenghao", "13158460430")
-	print result["rid"]
+	print type(result), type(result["rid"]), result

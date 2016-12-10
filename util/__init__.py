@@ -5,12 +5,14 @@ from util import config
 import os, logging, re, uuid, json
 from logging import handlers
 from datetime import datetime, date
+from dogpile.cache import make_region
 
 # 基本配置
 ADMIN_PREFIX = "/admin"  # 管理平台访问前缀
 UEDITOR_PREFIX = "/ueditor"  # 富文本编辑访问前缀
 ROW = 10    # 每页显示多少行
 DB_NAME = "blog"  # 数据库名称
+BLOG_COOKIE = "blog.cookie"  # cookie
 
 
 def get_current_date(pattern="%Y-%m-%d %H:%M:%S", datetime_s=None):
@@ -117,5 +119,55 @@ class GetLogging(object):
 	__metaclass__ = SingletonLog
 
 
+class SingletonDogpile(type):
+	"""
+	缓存单例
+	"""
+	def __init__(cls, name, bases, dict):
+		super(SingletonDogpile, cls).__init__(name, bases, dict)
+		cls._instances_cache = None
+		cls._instances_session = None
+
+	def __call__(cls, *args, **kwargs):
+		if cls._instances_cache is None and cls._instances_session is None:
+			super(SingletonDogpile, cls).__call__(*args, **kwargs)
+			conf = config.Config()
+
+			file_path = conf.get("dogpile", "cache.file.arguments.filename")
+			parent_path = os.path.dirname(file_path)
+			if not os.path.exists(parent_path):
+				os.makedirs(parent_path)
+
+			dogpile_conf = {
+				"cache.memory.backend": conf.get("dogpile", "cache.memory.backend"),
+				"cache.memory.expiration_time": conf.getint("dogpile", "cache.memory.expiration_time"),
+				"cache.file.backend": conf.get("dogpile", "cache.file.backend"),
+				"cache.file.expiration_time": conf.getint("dogpile", "cache.file.expiration_time"),
+				"cache.file.arguments.filename": conf.get("dogpile", "cache.file.arguments.filename"),
+
+				"session.memory.backend": conf.get("dogpile", "session.memory.backend"),
+				"session.memory.expiration_time": conf.getint("dogpile", "session.memory.expiration_time"),
+				"session.file.backend": conf.get("dogpile", "session.file.backend"),
+				"session.file.expiration_time": conf.get("dogpile", "session.file.expiration_time"),
+				"session.file.arguments.filename": conf.get("dogpile", "session.file.arguments.filename")
+			}
+			cls._instances_cache = make_region().configure_from_config(dogpile_conf, "cache.file.")
+			cls._instances_session = make_region().configure_from_config(dogpile_conf, "session.file.")
+		return cls._instances_cache, cls._instances_session
+
+
+class GetDogpile(object):
+	"""
+	获取缓存实例
+	"""
+	__metaclass__ = SingletonDogpile
+
+
 if __name__ == "__main__":
 	print total_page(24)
+	dogpiles = GetDogpile()
+	dogpile_cache = dogpiles[1]
+	dogpile_cache.set("chenghao", "222333444")
+	print dogpile_cache.get("chenghao")
+	dogpile_cache.delete("chenghao")
+	print dogpile_cache.get("chenghao")

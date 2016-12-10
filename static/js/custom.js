@@ -4,6 +4,9 @@
 
 var serverUrl = "/";
 
+success_layer_option = {icon: 1, time: 2000};
+error_layer_option = {icon: 5, time: 2000};
+
 function getPrefixPath(url) {
     return serverUrl + url;
 }
@@ -18,7 +21,7 @@ function ajaxReq(url, callback, param, method, async, error){
         data: !param ? {} : param,
         type: !method ? "get" : method,
         dataType: "json",
-		async: async == undefined ? true : async,
+		async: !async ? true : async,
         success: function (data) {
             if (callback) {
                 callback(data);
