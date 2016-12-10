@@ -1,0 +1,56 @@
+{% extends "admin/layout.html" %}
+
+{% block body %}
+	<body data-type="login">
+
+	  <div class="am-g myapp-login">
+		<div class="myapp-login-logo-block  tpl-login-max">
+			<div class="myapp-login-logo-text">
+				<div class="myapp-login-logo-text">
+					<span> Login</span> <i class="am-icon-skyatlas"></i>
+				</div>
+			</div>
+			<div class="am-u-sm-10 login-am-center">
+				<form class="am-form" id="CommonForm" method="post" action="#">
+					<fieldset>
+						<div class="am-form-group">
+							<input type="text" name="login_name" class="validate[required]" placeholder="登录名">
+						</div>
+						<div class="am-form-group">
+							<input type="password" name="login_pwd" class="validate[required]" placeholder="登录密码">
+						</div>
+						<p><button type="submit" class="am-btn am-btn-default">登录</button></p>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	  </div>
+
+		<script>
+			$('#CommonForm').validationEngine({
+				promptPosition: 'inline',
+				autoPositionUpdate: true,
+				onValidationComplete: f_formSuccess
+			});
+
+			//验证通过函数
+			function f_formSuccess(form, valid) {
+				if (!valid) {
+					return;
+				}
+
+				var data = $("#CommonForm").serialize();
+
+				ajaxReq("admin/login", function(d){
+					if(d.code == 0){
+						customHref("admin");
+					}else{
+						layer.msg(d.msg, error_layer_option);
+					}
+				}, data, "post");
+			}
+		</script>
+
+	</body>
+{% endblock %}
+

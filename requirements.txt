@@ -1,5 +1,5 @@
 pyorient
-mako
+Jinja2
 bottle
 gevent
 
